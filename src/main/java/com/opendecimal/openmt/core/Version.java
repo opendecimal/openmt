@@ -3,21 +3,14 @@ package com.opendecimal.openmt.core;
 import java.util.Objects;
 
 public class Version
-        implements Comparable<Version>, java.io.Serializable
-{
+        implements Comparable<Version>, java.io.Serializable {
     private static final long serialVersionUID = 1L;
 
-    private final static Version UNKNOWN_VERSION = new Version(0, 0, 0, null, null, null);
+    private final static Version UNKNOWN_VERSION = new Version(0, 0);
 
-    protected final int _majorVersion;
+    protected final int majorVersion;
 
-    protected final int _minorVersion;
-
-    protected final int _patchLevel;
-
-    protected final String _groupId;
-
-    protected final String _artifactId;
+    protected final int minorVersion;
 
     /**
      * Additional information for snapshot versions; null for non-snapshot
@@ -25,79 +18,41 @@ public class Version
      */
     protected final String _snapshotInfo;
 
-    /**
-     * @param major Major version number
-     * @param minor Minor version number
-     * @param patchLevel patch level of version
-     * @param snapshotInfo Optional additional string qualifier
-     *
-     * @since 2.1
-     * @deprecated Use variant that takes group and artifact ids
-     */
-    @Deprecated
-    public Version(int major, int minor, int patchLevel, String snapshotInfo)
-    {
-        this(major, minor, patchLevel, snapshotInfo, null, null);
-    }
-
-    public Version(int major, int minor, int patchLevel, String snapshotInfo,
-                   String groupId, String artifactId)
-    {
-        _majorVersion = major;
-        _minorVersion = minor;
-        _patchLevel = patchLevel;
+    public Version(int major, int minor, String snapshotInfo) {
+        majorVersion = major;
+        minorVersion = minor;
         _snapshotInfo = snapshotInfo;
-        _groupId = (groupId == null) ? "" : groupId;
-        _artifactId = (artifactId == null) ? "" : artifactId;
     }
 
-    /**
-     * Method returns canonical "not known" version, which is used as version
-     * in cases where actual version information is not known (instead of null).
-     *
-     * @return Version instance to use as a placeholder when actual version is not known
-     *   (or not relevant)
-     */
-    public static Version unknownVersion() { return UNKNOWN_VERSION; }
+    public Version(int major, int minor) {
+        this(major, minor, null);
+    }
 
-    /**
-     * @return {@code True} if this instance is the one returned by
-     *    call to {@link #unknownVersion()}
-     *
-     * @since 2.7 to replace misspelled {@link #isUknownVersion()}
-     */
-    public boolean isUnknownVersion() { return (this == UNKNOWN_VERSION); }
+    public static Version unknownVersion() {
+        return UNKNOWN_VERSION;
+    }
+
+    public boolean isUnknownVersion() {
+        return (this == UNKNOWN_VERSION);
+    }
 
     public boolean isSnapshot() {
         return (_snapshotInfo != null) && !_snapshotInfo.isEmpty();
     }
 
-    /**
-     * @return {@code True} if this instance is the one returned by
-     *    call to {@link #unknownVersion()}
-     *
-     * @deprecated Since 2.7 use correctly spelled method {@link #isUnknownVersion()}
-     */
-    @Deprecated
-    public boolean isUknownVersion() { return isUnknownVersion(); }
+    public int getMajorVersion() {
+        return majorVersion;
+    }
 
-    public int getMajorVersion() { return _majorVersion; }
-    public int getMinorVersion() { return _minorVersion; }
-    public int getPatchLevel() { return _patchLevel; }
-
-    public String getGroupId() { return _groupId; }
-    public String getArtifactId() { return _artifactId; }
-
-    public String toFullString() {
-        return _groupId + '/' + _artifactId + '/' + toString();
+    public int getMinorVersion() {
+        return minorVersion;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(_majorVersion).append('.');
-        sb.append(_minorVersion).append('.');
-        sb.append(_patchLevel);
+        sb.append(majorVersion).append('.');
+        sb.append(minorVersion).append('.');
         if (isSnapshot()) {
             sb.append('-').append(_snapshotInfo);
         }
@@ -106,55 +61,41 @@ public class Version
 
     @Override
     public int hashCode() {
-        return _artifactId.hashCode() ^ _groupId.hashCode()
-                ^ Objects.hashCode(_snapshotInfo)
-                + _majorVersion - _minorVersion + _patchLevel;
+        return Objects.hashCode(_snapshotInfo)
+                + majorVersion - minorVersion;
     }
 
     @Override
-    public boolean equals(Object o)
-    {
+    public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null) return false;
         if (o.getClass() != getClass()) return false;
         Version other = (Version) o;
-        return (other._majorVersion == _majorVersion)
-                && (other._minorVersion == _minorVersion)
-                && (other._patchLevel == _patchLevel)
-                && Objects.equals(other._snapshotInfo, _snapshotInfo)
-                && other._artifactId.equals(_artifactId)
-                && other._groupId.equals(_groupId)
-                ;
+        return (other.majorVersion == majorVersion)
+                && (other.minorVersion == minorVersion)
+                && Objects.equals(other._snapshotInfo, _snapshotInfo);
     }
 
     @Override
-    public int compareTo(Version other)
-    {
-        if (other == this) return 0;
-
-        int diff = _groupId.compareTo(other._groupId);
+    public int compareTo(Version other) {
+        int diff = 0;
+        if (other == this) return diff;
         if (diff == 0) {
-            diff = _artifactId.compareTo(other._artifactId);
+            diff = majorVersion - other.majorVersion;
             if (diff == 0) {
-                diff = _majorVersion - other._majorVersion;
+                diff = minorVersion - other.minorVersion;
                 if (diff == 0) {
-                    diff = _minorVersion - other._minorVersion;
-                    if (diff == 0) {
-                        diff = _patchLevel - other._patchLevel;
-                        if (diff == 0) {
-                            // Snapshot: non-snapshot AFTER snapshot, otherwise alphabetical
-                            if (isSnapshot()) {
-                                if (other.isSnapshot()) {
-                                    diff = _snapshotInfo.compareTo(other._snapshotInfo);
-                                } else {
-                                    diff = -1;
-                                }
-                            } else if (other.isSnapshot()) {
-                                diff = 1;
-                            } else {
-                                diff = 0;
-                            }
+                    // Snapshot: non-snapshot AFTER snapshot, otherwise alphabetical
+                    if (isSnapshot()) {
+                        if (other.isSnapshot()) {
+                            diff = _snapshotInfo.compareTo(other._snapshotInfo);
+                        } else {
+                            diff = -1;
                         }
+                    } else if (other.isSnapshot()) {
+                        diff = 1;
+                    } else {
+                        diff = 0;
                     }
                 }
             }

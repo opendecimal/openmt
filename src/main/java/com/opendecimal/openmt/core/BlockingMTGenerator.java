@@ -1,18 +1,13 @@
 package com.opendecimal.openmt.core;
 
-public class BlockingMTGenerator extends MTGenerator {
-    @Override
-    public Version version() {
-        return null;
-    }
+import com.opendecimal.openmt.core.base.MTGeneratorBase;
+
+import java.io.IOException;
+
+public class BlockingMTGenerator extends MTGeneratorBase {
 
     @Override
-    public void close() {
-
+    public void close() throws IOException {
     }
 
-    @Override
-    public void flush() {
-
-    }
 }

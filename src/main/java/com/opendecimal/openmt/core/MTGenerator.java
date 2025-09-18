@@ -10,7 +10,7 @@ public abstract class MTGenerator implements Closeable, Flushable, Versioned {
     public abstract Version version();
 
     @Override
-    public abstract void close();
+    public abstract void close() throws IOException;
 
     @Override
     public abstract void flush();
