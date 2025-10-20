@@ -9,4 +9,5 @@ public class BlockingMTParser extends MTParserBase {
     @Override
     public void closeInput() {
     }
+
 }
