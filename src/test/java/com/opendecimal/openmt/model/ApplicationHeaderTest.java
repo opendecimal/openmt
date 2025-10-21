@@ -8,6 +8,6 @@ class ApplicationHeaderTest {
 
     @Test
     void getNum() {
-        assertEquals(2, (new ApplicationHeader()).getNum());
+        assertEquals(2, (new ApplicationHeaderInput()).getNum());
     }
 }

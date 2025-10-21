@@ -12,7 +12,7 @@ public class BasicHeader extends Block {
 
     private Integer sessionNum;
 
-    private Integer SequenceNum;
+    private Integer sequenceNum;
 
     public BasicHeader(ApplicationID applicationID, APPDU appdu) {
         this.applicationID = applicationID;
@@ -49,11 +49,11 @@ public class BasicHeader extends Block {
     }
 
     public Integer getSequenceNum() {
-        return SequenceNum;
+        return sequenceNum;
     }
 
     public void setSequenceNum(Integer sequenceNum) {
-        SequenceNum = sequenceNum;
+        this.sequenceNum = sequenceNum;
     }
 
     public enum ApplicationID {
@@ -63,13 +63,13 @@ public class BasicHeader extends Block {
         APC("A"),
         // LOGICAL TERMINAL CONTROL
         LTC("L");
-        private final String cd;
-        ApplicationID(String cd) {
-            this.cd = cd;
+        private final String label;
+        ApplicationID(String label) {
+            this.label = label;
         }
 
-        public String getCd() {
-            return this.cd;
+        public String getLabel() {
+            return this.label;
         }
     }
 
@@ -82,13 +82,13 @@ public class BasicHeader extends Block {
         _03("03"),
         // EXIT
         _04("04");
-        private final String cd;
-        APPDU(String cd) {
-            this.cd = cd;
+        private final String label;
+        APPDU(String label) {
+            this.label = label;
         }
 
-        public String getCd() {
-            return this.cd;
+        public String getLabel() {
+            return this.label;
         }
     }
 
