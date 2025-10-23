@@ -10,9 +10,9 @@ public class BasicHeader extends Block {
 
     private String bic12;
 
-    private Integer sessionNum;
+    private String sessionNum;
 
-    private Integer sequenceNum;
+    private String sequenceNum;
 
     public BasicHeader(ApplicationID applicationID, APPDU appdu) {
         this.applicationID = applicationID;
@@ -40,19 +40,19 @@ public class BasicHeader extends Block {
         this.bic12 = bic12;
     }
 
-    public Integer getSessionNum() {
+    public String getSessionNum() {
         return sessionNum;
     }
 
-    public void setSessionNum(Integer sessionNum) {
+    public void setSessionNum(String sessionNum) {
         this.sessionNum = sessionNum;
     }
 
-    public Integer getSequenceNum() {
+    public String getSequenceNum() {
         return sequenceNum;
     }
 
-    public void setSequenceNum(Integer sequenceNum) {
+    public void setSequenceNum(String sequenceNum) {
         this.sequenceNum = sequenceNum;
     }
 
@@ -70,6 +70,15 @@ public class BasicHeader extends Block {
 
         public String getLabel() {
             return this.label;
+        }
+
+        public static ApplicationID of(char cr) {
+            return switch (cr) {
+                case 'F' -> FIN;
+                case 'A' -> APC;
+                case 'L' -> LTC;
+                default -> null;
+            };
         }
     }
 
@@ -89,6 +98,16 @@ public class BasicHeader extends Block {
 
         public String getLabel() {
             return this.label;
+        }
+
+        static public APPDU of(String str) {
+            return switch (str) {
+                case "01" -> _01;
+                case "02" -> _02;
+                case "03" -> _03;
+                case "04" -> _04;
+                default -> null;
+            };
         }
     }
 
